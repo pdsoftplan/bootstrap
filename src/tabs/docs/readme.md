@@ -25,11 +25,15 @@ AngularJS version of the tabs directive.
  * `active` <i class="glyphicon glyphicon-eye-open"></i>
  	_(Defaults: false)_ :
  	Whether tab is currently selected.
-
+ 	
  * `disable` <i class="glyphicon glyphicon-eye-open"></i>
- 	_(Defaults: false)_ :
- 	Whether tab is clickable and can be activated.
- 	Note that this was previously the `disabled` attribute, which is now deprecated.
+    _(Defaults: false)_ :
+    Whether tab is clickable and can be activated.
+    Note that this was previously the `disabled` attribute, which is now deprecated.
+
+ * `id` 
+ 	_(Defaults: null)_ :
+ 	An optional attribute to identify the tab and optimize accessibility 
 
  * `select()`
  	_(Defaults: null)_ :
@@ -38,3 +42,4 @@ AngularJS version of the tabs directive.
  * `deselect()`
  	_(Defaults: null)_ :
  	An optional expression called when tab is deactivated.
+

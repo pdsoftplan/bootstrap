@@ -108,6 +108,7 @@ angular.module('ui.bootstrap.tabs', [])
  * @restrict EA
  *
  * @param {string=} heading The visible heading, or title, of the tab. Set HTML headings with {@link ui.bootstrap.tabs.directive:tabHeading tabHeading}.
+ * @param {string=} id The name of attribute used for refer to tab content.
  * @param {string=} select An expression to evaluate when the tab is selected.
  * @param {boolean=} active A binding, telling whether or not this tab is selected.
  * @param {boolean=} disabled A binding, telling whether or not this tab is disabled.
@@ -192,6 +193,7 @@ angular.module('ui.bootstrap.tabs', [])
     scope: {
       active: '=?',
       heading: '@',
+      id : '@',
       onSelect: '&select', //This callback is called in contentHeadingTransclude
                           //once it inserts the tab's content into the dom
       onDeselect: '&deselect'
@@ -223,6 +225,10 @@ angular.module('ui.bootstrap.tabs', [])
           scope.$parent.$watch($parse(attrs.disabled), function(value) {
             scope.disabled = !! value;
           });
+        }
+
+        if ( attrs.id ) {
+          elm.removeAttr('id');
         }
 
         scope.select = function() {
@@ -265,7 +271,6 @@ angular.module('ui.bootstrap.tabs', [])
     require: '^tabset',
     link: function(scope, elm, attrs) {
       var tab = scope.$eval(attrs.tabContentTransclude);
-
       //Now our tab is ready to be transcluded: both the tab heading area
       //and the tab content area are loaded.  Transclude 'em both.
       tab.$transcludeFn(tab.$parent, function(contents) {
@@ -278,6 +283,7 @@ angular.module('ui.bootstrap.tabs', [])
           }
         });
       });
+      addNavigationHandler(elm);
     }
   };
   function isTabHeading(node) {
@@ -286,6 +292,34 @@ angular.module('ui.bootstrap.tabs', [])
       node.hasAttribute('data-tab-heading') ||
       node.tagName.toLowerCase() === 'tab-heading' ||
       node.tagName.toLowerCase() === 'data-tab-heading'
+    );
+  }
+
+  function addNavigationHandler(tab) {
+    var topParent = tab.parent().parent();
+    var tabsList = $(topParent).find('ul:first');
+    //set keydown events on tabList item for navigating and selection tabs
+    $(tabsList).on('keydown', 'a',
+      function (e) {
+        switch (e.which) {
+          case 37: case 38:
+          if ($(this).parent().prev().length !== 0) {
+            $(this).parent().prev().find('>a').focus();
+          } else {
+            $(tabsList).find('li:last>a').focus();
+          }
+          break;
+          case 39: case 40:
+          if ($(this).parent().next().length !== 0) {
+            $(this).parent().next().find('>a').focus();
+          } else {
+            $(tabsList).find('li:first>a').focus();
+          }
+          break;
+          case 13:
+            $(this).click();
+        }
+      }
     );
   }
 })
