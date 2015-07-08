@@ -6,6 +6,9 @@ angular.module('ui.bootstrap.collapse', [])
       link: function (scope, element, attrs) {
         function expand() {
           element.removeClass('collapse').addClass('collapsing');
+          element.attr('aria-expanded', true);
+          element.attr('aria-hidden', false);
+
           $animate.addClass(element, 'in', {
             to: { height: element[0].scrollHeight + 'px' }
           }).then(expandDone);
@@ -26,6 +29,8 @@ angular.module('ui.bootstrap.collapse', [])
             // prevents the animation from jumping to collapsed state
             .removeClass('collapse')
             .addClass('collapsing');
+          element.attr('aria-expanded', false);
+          element.attr('aria-hidden', true);
 
           $animate.removeClass(element, 'in', {
             to: {height: '0'}
