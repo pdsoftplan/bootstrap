@@ -296,31 +296,45 @@ angular.module('ui.bootstrap.tabs', [])
   }
 
   function addNavigationHandler(tab) {
-    var topParent = tab.parent().parent();
-    var tabsList = $(topParent).find('ul:first');
+    var aElements = tab.parent().parent().find('ul').find('a');
     //set keydown events on tabList item for navigating and selection tabs
-    $(tabsList).on('keydown', 'a',
-      function (e) {
+    aElements.on('keyup', function (e) {
+        var aElement = e.target;
+        var tabElement = aElement.parentNode;
         switch (e.which) {
-          case 37: case 38:
-          if ($(this).parent().prev().length !== 0) {
-            $(this).parent().prev().find('>a').focus();
+          case 37:case 38:
+          if (previousElementSibling(tabElement) != null) {
+            previousElementSibling(tabElement).querySelector('a').focus();
           } else {
-            $(tabsList).find('li:last>a').focus();
+            aElements[aElements.length - 1].focus();
           }
           break;
           case 39: case 40:
-          if ($(this).parent().next().length !== 0) {
-            $(this).parent().next().find('>a').focus();
+          if (nextElementSibling(tabElement) != null) {
+            nextElementSibling(tabElement).querySelector('a').focus();
           } else {
-            $(tabsList).find('li:first>a').focus();
+            aElements[0].focus();
           }
           break;
           case 13:
-            $(this).click();
+            aElement.click();
         }
       }
     );
+  }
+
+  function nextElementSibling(element) {
+    do {
+      element = element.nextSibling;
+    } while (element && element.nodeType !== 1);
+    return element;
+  }
+
+  function previousElementSibling(element) {
+    do {
+      element = element.previousSibling;
+    } while (element && element.nodeType !== 1);
+    return element;
   }
 })
 
