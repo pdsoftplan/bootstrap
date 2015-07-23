@@ -411,5 +411,55 @@ describe('accordion', function () {
       });
     });
 
+    describe(' with accessibility ', function () {
+      beforeEach(function () {
+        var tpl =
+          '<accordion>' +
+          '<accordion-group heading="title 1">Content 1</accordion-group>' +
+          '<accordion-group heading="title 2">Content 2</accordion-group>' +
+          '</accordion>';
+        element = angular.element(tpl);
+        $compile(element)(scope);
+        scope.$digest();
+        groups = element.find('.panel');
+      });
+      afterEach(function () {
+        element.remove();
+      });
+
+      it('should have aria-label at link', function () {
+        expect(findGroupLink(0).attr('aria-label')).toEqual('title 1');
+        expect(findGroupLink(1).attr('aria-label')).toEqual('title 2');
+      });
+
+      it('should have role button in title', function () {
+        expect(findGroupLink(0).attr('role')).toEqual('button');
+        expect(findGroupLink(1).attr('role')).toEqual('button');
+      });
+
+      it('should be tabbable when is open', function () {
+        findGroupLink(1).click();
+        scope.$digest();
+        expect(findGroupBody(0).find('div').attr('tabindex')).toEqual('-1');
+        expect(findGroupBody(1).find('div').attr('tabindex')).toEqual('0');
+
+        findGroupLink(0).click();
+        scope.$digest();
+        expect(findGroupBody(0).find('div').attr('tabindex')).toEqual('0');
+        expect(findGroupBody(1).find('div').attr('tabindex')).toEqual('-1');
+      });
+
+      it('should change aria hidden when is open', function () {
+        findGroupLink(1).click();
+        scope.$digest();
+        expect(findGroupBody(0).find('div').attr('aria-hidden')).toEqual('true');
+        expect(findGroupBody(1).find('div').attr('aria-hidden')).toEqual('false');
+
+        findGroupLink(0).click();
+        scope.$digest();
+        expect(findGroupBody(0).find('div').attr('aria-hidden')).toEqual('false');
+        expect(findGroupBody(1).find('div').attr('aria-hidden')).toEqual('true');
+      });
+    });
   });
 });
