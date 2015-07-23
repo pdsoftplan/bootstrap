@@ -449,17 +449,6 @@ describe('accordion', function () {
         expect(findGroupBody(1).find('div').attr('tabindex')).toEqual('-1');
       });
 
-      it('should change aria hidden when is open', function () {
-        findGroupLink(1).click();
-        scope.$digest();
-        expect(findGroupBody(0).find('div').attr('aria-hidden')).toEqual('true');
-        expect(findGroupBody(1).find('div').attr('aria-hidden')).toEqual('false');
-
-        findGroupLink(0).click();
-        scope.$digest();
-        expect(findGroupBody(0).find('div').attr('aria-hidden')).toEqual('false');
-        expect(findGroupBody(1).find('div').attr('aria-hidden')).toEqual('true');
-      });
     });
   });
 });
