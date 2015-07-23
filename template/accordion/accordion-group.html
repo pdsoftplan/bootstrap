@@ -1,10 +1,11 @@
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h4 class="panel-title">
-      <a href="#" tabindex="0" class="accordion-toggle" ng-click="$event.preventDefault(); toggleOpen()" accordion-transclude="heading"><span ng-class="{'text-muted': isDisabled}">{{heading}}</span></a>
+    <h4 class="panel-title" role="presentation">
+      <a href="#" tabindex="0" class="accordion-toggle" ng-click="$event.preventDefault(); toggleOpen()"
+         role="button" aria-label="{{heading}}" aria-expanded="{{isOpen}}" accordion-transclude="heading"><span ng-class="{'text-muted': isDisabled}">{{heading}}</span></a>
     </h4>
   </div>
   <div class="panel-collapse collapse" collapse="!isOpen">
-	  <div class="panel-body" ng-transclude></div>
+	  <div class="panel-body" tabindex="{{isOpen ? '0' : '-1'}}" role="document" aria-hidden="{{!isOpen}}" ng-transclude></div>
   </div>
 </div>
