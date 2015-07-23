@@ -40,8 +40,9 @@ angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.position'])
       return;
     }
 
-    var $element = openScope.getElement();
-    if( evt && openScope.getAutoClose() === 'outsideClick' && $element && $element[0].contains(evt.target) ) {
+    var dropdownElement = openScope.getDropdownElement();
+    if (evt && openScope.getAutoClose() === 'outsideClick' &&
+      dropdownElement && dropdownElement[0].contains(evt.target)) {
       return;
     }
 
@@ -155,6 +156,10 @@ angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.position'])
     elems[self.selectedOption].focus();
   };
 
+  scope.getDropdownElement = function() {
+    return self.dropdownMenu;
+  };
+
   scope.focusToggleElement = function() {
     if ( self.toggleElement ) {
       self.toggleElement[0].focus();
@@ -234,6 +239,7 @@ angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.position'])
     controller: 'DropdownController',
     link: function(scope, element, attrs, dropdownCtrl) {
       dropdownCtrl.init( element );
+      element.addClass('dropdown');
     }
   };
 })
@@ -265,7 +271,7 @@ angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.position'])
 
       element.bind('keydown', function(e) {
 
-        if ( /(38|40)/.test(e.which)) {
+        if ([38, 40].indexOf(e.which) !== -1) {
 
           e.preventDefault();
           e.stopPropagation();
@@ -302,6 +308,8 @@ angular.module('ui.bootstrap.dropdown', ['ui.bootstrap.position'])
       if ( !dropdownCtrl ) {
         return;
       }
+
+      element.addClass('dropdown-toggle');
 
       dropdownCtrl.toggleElement = element;
 
