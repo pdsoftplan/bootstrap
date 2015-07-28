@@ -214,7 +214,7 @@ angular.module('ui.bootstrap.modal', [])
         return topBackdropIndex;
       }
 
-      $rootScope.$watch(backdropIndex, function(newBackdropIndex){
+      $rootScope.$watch(backdropIndex, function(newBackdropIndex) {
         if (backdropScope) {
           backdropScope.index = newBackdropIndex;
         }
@@ -291,27 +291,27 @@ angular.module('ui.bootstrap.modal', [])
         var modal = openedWindows.top();
         if (modal && modal.value.keyboard) {
           switch (evt.which){
-            case 27:{
+            case 27: {
               evt.preventDefault();
               $rootScope.$apply(function () {
                 $modalStack.dismiss(modal.key, 'escape key press');
               });
               break;
             }
-            case 9:{
+            case 9: {
               $modalStack.loadFocusElementList(modal);
               var focusChanged = false;
               if (evt.shiftKey) {
-                if($modalStack.isFocusInFirstItem(evt)){
+                if ($modalStack.isFocusInFirstItem(evt)) {
                   focusChanged = $modalStack.focusLastFocusableElement();
                 }
-              }
-              else{
-                if($modalStack.isFocusInLastItem(evt)){
+              } else {
+                if ($modalStack.isFocusInLastItem(evt)) {
                   focusChanged = $modalStack.focusFirstFocusableElement();
                 }
               }
-              if(focusChanged){
+
+              if (focusChanged) {
                 evt.preventDefault();
                 evt.stopPropagation();
               }
@@ -410,45 +410,45 @@ angular.module('ui.bootstrap.modal', [])
         }
       };
 
-      $modalStack.focusFirstFocusableElement = function(){
-        if(focusableElementList.length > 0){
+      $modalStack.focusFirstFocusableElement = function() {
+        if (focusableElementList.length > 0) {
           focusableElementList[0].focus();
           return true;
         }
         return false;
       };
-      $modalStack.focusLastFocusableElement = function(){
-        if(focusableElementList.length > 0) {
-          focusableElementList[focusableElementList.length-1].focus();
+      $modalStack.focusLastFocusableElement = function() {
+        if (focusableElementList.length > 0) {
+          focusableElementList[focusableElementList.length - 1].focus();
           return true;
         }
         return false;
       };
 
-      $modalStack.isFocusInFirstItem = function(evt){
-        if(focusableElementList.length > 0){
+      $modalStack.isFocusInFirstItem = function(evt) {
+        if (focusableElementList.length > 0) {
           return (evt.target || evt.srcElement) == focusableElementList[0];
         }
         return false;
       };
 
-      $modalStack.isFocusInLastItem = function(evt){
-        if(focusableElementList.length > 0){
-          return (evt.target || evt.srcElement) == focusableElementList[focusableElementList.length-1];
+      $modalStack.isFocusInLastItem = function(evt) {
+        if (focusableElementList.length > 0) {
+          return (evt.target || evt.srcElement) == focusableElementList[focusableElementList.length - 1];
         }
         return false;
       };
 
-      $modalStack.clearFocusListCache = function(){
+      $modalStack.clearFocusListCache = function() {
         focusableElementList = [];
         focusIndex = 0;
       };
 
-      $modalStack.loadFocusElementList = function (modalWindow){
-        if(focusableElementList === undefined || focusableElementList.length === 0){
-          if(modalWindow){
+      $modalStack.loadFocusElementList = function(modalWindow) {
+        if (focusableElementList === undefined || !focusableElementList.length0) {
+          if (modalWindow) {
             var modalDomE1 = modalWindow.value.modalDomEl;
-            if(modalDomE1 && modalDomE1.length > 0) {
+            if (modalDomE1 && modalDomE1.length) {
               focusableElementList = modalDomE1[0].querySelectorAll(tababbleSelector);
             }
           }
