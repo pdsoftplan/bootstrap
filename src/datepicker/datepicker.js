@@ -85,7 +85,6 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
       } else {
         $log.error('Datepicker directive: "ng-model" value must be a Date object, a number of milliseconds since 01.01.1970 or a string representing an RFC2822 or ISO 8601 date.');
       }
-      ngModelCtrl.$setValidity('date', isValid);
     }
     this.refreshView();
   };
@@ -616,6 +615,11 @@ function ($compile, $parse, $document, $position, dateFilter, dateParser, datepi
 
       function validator(modelValue, viewValue) {
         var value = modelValue || viewValue;
+
+        if (!attrs.ngRequired && !value) {
+          return true;
+        }
+
         if (angular.isNumber(value)) {
           value = new Date(value);
         }
@@ -706,10 +710,9 @@ function ($compile, $parse, $document, $position, dateFilter, dateParser, datepi
           scope.position = appendToBody ? $position.offset(element) : $position.position(element);
           scope.position.top = scope.position.top + element.prop('offsetHeight');
 
-          $document.bind('click', documentClickBind);
-
           $timeout(function() {
             scope.$broadcast('datepicker.focus');
+            $document.bind('click', documentClickBind);
           }, 0, false);
         } else {
           $document.unbind('click', documentClickBind);

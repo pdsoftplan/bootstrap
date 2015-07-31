@@ -334,11 +334,10 @@ describe('datepicker directive', function () {
           expect(angular.isDate($rootScope.date)).toBe(true);
         });
 
-        it('to a date that is invalid, it gets invalid', function() {
+        it('to a date that is invalid, it doesn\`t update', function() {
           $rootScope.date = new Date('pizza');
           $rootScope.$digest();
-          expect(element.hasClass('ng-invalid')).toBeTruthy();
-          expect(element.hasClass('ng-invalid-date')).toBeTruthy();
+          expect(getTitle()).toBe('September 2010');
           expect(angular.isDate($rootScope.date)).toBe(true);
           expect(isNaN($rootScope.date)).toBe(true);
         });
@@ -360,11 +359,10 @@ describe('datepicker directive', function () {
           expect(angular.isString($rootScope.date)).toBe(true);
         });
 
-        it('to a string that cannot be parsed by Date, it gets invalid', function() {
+        it('to a string that cannot be parsed by Date, it doesn\'t update', function() {
           $rootScope.date = 'pizza';
           $rootScope.$digest();
-          expect(element.hasClass('ng-invalid')).toBeTruthy();
-          expect(element.hasClass('ng-invalid-date')).toBeTruthy();
+          expect(getTitle()).toBe('September 2010');
           expect($rootScope.date).toBe('pizza');
         });
       });
@@ -1186,7 +1184,7 @@ describe('datepicker directive', function () {
   });
 
   describe('as popup', function () {
-    var inputEl, dropdownEl, $document, $sniffer;
+    var inputEl, dropdownEl, $document, $sniffer, $timeout;
 
     function assignElements(wrapElement) {
       inputEl = wrapElement.find('input');
@@ -1223,9 +1221,10 @@ describe('datepicker directive', function () {
     describe('initially opened', function () {
       var wrapElement;
 
-      beforeEach(inject(function(_$document_, _$sniffer_) {
+      beforeEach(inject(function(_$document_, _$sniffer_, _$timeout_) {
         $document = _$document_;
         $sniffer = _$sniffer_;
+        $timeout = _$timeout_;
         $rootScope.isopen = true;
         $rootScope.date = new Date('September 30, 2010 15:30:00');
         wrapElement = $compile('<div><input ng-model="date" datepicker-popup is-open="isopen"><div>')($rootScope);
@@ -1297,6 +1296,7 @@ describe('datepicker directive', function () {
       it('closes when click outside of calendar', function() {
         expect(dropdownEl.length).toBe(1);
 
+        $timeout.flush(0);
         $document.find('body').click();
         assignElements(wrapElement);
         expect(dropdownEl.length).toBe(0);
@@ -1876,27 +1876,41 @@ describe('datepicker directive', function () {
     });
 
     describe('use with `ng-required` directive', function() {
-      beforeEach(inject(function() {
-        $rootScope.date = '';
-        var wrapElement = $compile('<div><input ng-model="date" datepicker-popup ng-required="true"><div>')($rootScope);
-        $rootScope.$digest();
-        assignElements(wrapElement);
-      }));
+      describe('`ng-required is true`', function() {
+        beforeEach(inject(function() {
+          $rootScope.date = '';
+          var wrapElement = $compile('<div><input ng-model="date" datepicker-popup ng-required="true"><div>')($rootScope);
+          $rootScope.$digest();
+          assignElements(wrapElement);
+        }));
 
-      it('should be invalid initially', function() {
-        expect(inputEl.hasClass('ng-invalid')).toBeTruthy();
+        it('should be invalid initially and when no date', function() {
+          expect(inputEl.hasClass('ng-invalid')).toBeTruthy();
+        });
+
+        it('should be valid if model has been specified', function() {
+          $rootScope.date = new Date();
+          $rootScope.$digest();
+          expect(inputEl.hasClass('ng-valid')).toBeTruthy();
+        });
+
+        it('should be valid if model value is a valid timestamp', function() {
+          $rootScope.date = Date.now();
+          $rootScope.$digest();
+          expect(inputEl.hasClass('ng-valid')).toBeTruthy();
+        });
       });
+      describe('`ng-required is false`', function() {
+        beforeEach(inject(function() {
+          $rootScope.date = '';
+          var wrapElement = $compile('<div><input ng-model="date" datepicker-popup ng-required="false"><div>')($rootScope);
+          $rootScope.$digest();
+          assignElements(wrapElement);
+        }));
 
-      it('should be valid if model has been specified', function() {
-        $rootScope.date = new Date();
-        $rootScope.$digest();
-        expect(inputEl.hasClass('ng-valid')).toBeTruthy();
-      });
-
-      it('should be valid if model value is a valid timestamp', function() {
-        $rootScope.date = Date.now();
-        $rootScope.$digest();
-        expect(inputEl.hasClass('ng-valid')).toBeTruthy();
+        it('should be valid initially and when no date', function() {
+          expect(inputEl.hasClass('ng-valid')).toBeTruthy();
+        });
       });
     });
 
