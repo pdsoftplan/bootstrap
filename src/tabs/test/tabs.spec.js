@@ -96,6 +96,72 @@ describe('tabs', function() {
       titles().eq(1).find('a').click();
       expect(scope.deselectFirst).toHaveBeenCalled();
     });
+
+  });
+
+  describe('accessibility', function() {
+
+    beforeEach(inject(function($compile, $rootScope) {
+      scope = $rootScope.$new();
+      scope.tabs = [
+        { title:'Dynamic Title 1', content:'Dynamic content 1' , id:'DynamicTab01'},
+        { title:'Dynamic Title 2', content:'Dynamic content 2' , id:'DynamicTab02'}
+      ];
+      elm = $compile([
+        '<tabset>',
+        '  <tab heading="Static title" id="staticTab">Static content</tab>',
+        '  <tab ng-repeat="tab in tabs" heading="{{tab.title}}" id="{{tab.id}}">',
+        '      {{tab.content}}',
+        '  </tab>',
+        '</tabset>',
+      ].join('\n'))(scope);
+
+      scope.$apply();
+      return elm;
+    }));
+
+    it('should have aria attributes in title', function() {
+      var tabTitles = titles().find('a');
+
+      expect(tabTitles.eq(0).attr('tabindex')).toBe('0');
+      expect(tabTitles.eq(0).attr('aria-selected')).toBe('true');
+
+      expect(tabTitles.eq(1).attr('tabindex')).toBe('-1');
+      expect(tabTitles.eq(1).attr('aria-selected')).toBe('false');
+
+      expect(tabTitles.eq(2).attr('tabindex')).toBe('-1');
+      expect(tabTitles.eq(2).attr('aria-selected')).toBe('false');
+    });
+
+    it('should have aria attributes in panels', function() {
+      var content = contents();
+
+      expect(content.eq(0).attr('tabindex')).toBe('0');
+      expect(content.eq(0).attr('aria-hidden')).toBe('false');
+
+      expect(content.eq(1).attr('tabindex')).toBe('-1');
+      expect(content.eq(1).attr('aria-hidden')).toBe('true');
+
+      expect(content.eq(2).attr('tabindex')).toBe('-1');
+      expect(content.eq(2).attr('aria-hidden')).toBe('true');
+    });
+
+    it('should have aria reference on content to the title', function() {
+      var tabTitles = titles().find('a');
+      var content = contents();
+
+      expect(tabTitles.eq(0).attr('id')).toBe('staticTab');
+      expect(tabTitles.eq(1).attr('id')).toBe('DynamicTab01');
+      expect(tabTitles.eq(2).attr('id')).toBe('DynamicTab02');
+
+      expect(content.eq(0).attr('aria-labelledby')).toBe('staticTab');
+      expect(content.eq(1).attr('aria-labelledby')).toBe('DynamicTab01');
+      expect(content.eq(2).attr('aria-labelledby')).toBe('DynamicTab02');
+    });
+
+    it('should preserve correct ordering', function() {
+
+    });
   });
 
   describe('basics with initial active tab', function() {

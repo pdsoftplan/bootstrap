@@ -1,3 +1,2 @@
-<li ng-class="{active: active, disabled: disabled}">
-  <a href ng-click="select()" tab-heading-transclude>{{heading}}</a>
-</li>
+<li ng-class="{active: active, disabled: disabled}" role="presentation">
+  <a href="#" ng-click="$event.preventDefault(); select()" role="tab" tabindex="{{active ? 0 : -1}}" aria-selected="{{!!active}}" id="{{id}}" tab-heading-transclude>{{heading}}</a></li>

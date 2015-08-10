@@ -108,6 +108,7 @@ angular.module('ui.bootstrap.tabs', [])
  * @restrict EA
  *
  * @param {string=} heading The visible heading, or title, of the tab. Set HTML headings with {@link ui.bootstrap.tabs.directive:tabHeading tabHeading}.
+ * @param {string=} id The name of attribute used for refer to tab content.
  * @param {string=} select An expression to evaluate when the tab is selected.
  * @param {boolean=} active A binding, telling whether or not this tab is selected.
  * @param {boolean=} disabled A binding, telling whether or not this tab is disabled.
@@ -192,6 +193,7 @@ angular.module('ui.bootstrap.tabs', [])
     scope: {
       active: '=?',
       heading: '@',
+      id : '@',
       onSelect: '&select', //This callback is called in contentHeadingTransclude
                           //once it inserts the tab's content into the dom
       onDeselect: '&deselect'
@@ -230,11 +232,22 @@ angular.module('ui.bootstrap.tabs', [])
         }
       };
 
+      scope.select = function() {
+        if ( !scope.disabled ) {
+          scope.active = true;
+        }
+      };
       tabsetCtrl.addTab(scope);
       scope.$on('$destroy', function() {
         tabsetCtrl.removeTab(scope);
-      });
+      });      if ( attrs.id ) {        elm.removeAttr('id');
+      }
 
+      scope.select = function() {
+        if ( !scope.disabled ) {
+          scope.active = true;
+        }
+      };
       //We need to transclude later, once the content container is ready.
       //when this link happens, we're inside a tab heading.
       scope.$transcludeFn = transclude;
@@ -263,7 +276,6 @@ angular.module('ui.bootstrap.tabs', [])
     require: '^tabset',
     link: function(scope, elm, attrs) {
       var tab = scope.$eval(attrs.tabContentTransclude);
-
       //Now our tab is ready to be transcluded: both the tab heading area
       //and the tab content area are loaded.  Transclude 'em both.
       tab.$transcludeFn(tab.$parent, function(contents) {
@@ -276,6 +288,7 @@ angular.module('ui.bootstrap.tabs', [])
           }
         });
       });
+      addNavigationHandler(elm);
     }
   };
   function isTabHeading(node) {
@@ -285,6 +298,48 @@ angular.module('ui.bootstrap.tabs', [])
       node.tagName.toLowerCase() === 'tab-heading' ||
       node.tagName.toLowerCase() === 'data-tab-heading'
     );
+  }
+
+  function addNavigationHandler(tab) {
+    var aElements = tab.parent().parent().find('ul').find('a');
+    //set keydown events on tabList item for navigating and selection tabs
+    aElements.on('keyup', function (e) {
+        var aElement = e.target;
+        var tabElement = aElement.parentNode;
+        switch (e.which) {
+          case 37:case 38:
+          if (previousElementSibling(tabElement) != null) {
+            previousElementSibling(tabElement).querySelector('a').focus();
+          } else {
+            aElements[aElements.length - 1].focus();
+          }
+          break;
+          case 39: case 40:
+          if (nextElementSibling(tabElement) != null) {
+            nextElementSibling(tabElement).querySelector('a').focus();
+          } else {
+            aElements[0].focus();
+          }
+          break;
+          case 13:
+            aElement.click();
+        }
+      }
+    );
+  }
+
+  function nextElementSibling(element) {
+    do {
+      element = element.nextSibling;
+    } while (element && element.nodeType !== 1);
+    return element;
+  }
+
+  function previousElementSibling(element) {
+    do {
+      element = element.previousSibling;
+    } while (element && element.nodeType !== 1);
+    return element;
   }
 })
 
