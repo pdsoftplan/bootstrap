@@ -243,6 +243,30 @@ describe('$modal', function () {
       expect($document).toHaveModalsOpen(0);
     });
 
+    it('should not close on ESC if event.preventDefault() was issued', function () {
+      var modal = open({template: '<div><button>x</button></div>' });
+      expect($document).toHaveModalsOpen(1);
+
+      var button = angular.element('button').on('keydown', preventKeyDown);
+
+      triggerKeyDown(button, 27);
+      $rootScope.$digest();
+
+      expect($document).toHaveModalsOpen(1);
+
+      button.off('keydown', preventKeyDown);
+
+      triggerKeyDown(button, 27);
+      $animate.triggerCallbacks();
+      $rootScope.$digest();
+
+      expect($document).toHaveModalsOpen(0);
+
+      function preventKeyDown(evt) {
+        evt.preventDefault();
+      }
+    });
+
     it('should support closing on backdrop click', function () {
 
       var modal = open({template: '<div>Content</div>'});
@@ -312,6 +336,17 @@ describe('$modal', function () {
       dismiss(modal, 'esc');
 
       expect(modal.result).toBeRejectedWith('esc');
+    });
+
+    it('should reject returned promise on unexpected closure', function () {
+      var scope = $rootScope.$new();
+      var modal = open({template: '<div>Content</div>', scope: scope});
+      scope.$destroy();
+
+      expect(modal.result).toBeRejectedWith('$uibUnscheduledDestruction');
+
+      $animate.triggerCallbacks();
+      expect($document).toHaveModalsOpen(0);
     });
 
     it('should expose a promise linked to the templateUrl / resolve promises', function () {
@@ -480,7 +515,7 @@ describe('$modal', function () {
       });
 
       it('should allow usage of bindToController', function () {
-        open({template: '<div>{{fromCtrl}} {{isModalInstance}}</div>', controller: function($modalInstance) {
+        open({template: '<div>{{test.fromCtrl}} {{test.isModalInstance}}</div>', controller: function($modalInstance) {
           this.fromCtrl = 'Content from ctrl';
           this.isModalInstance = angular.isObject($modalInstance) && angular.isFunction($modalInstance.close);
         }, controllerAs: 'test', bindToController: true});
@@ -508,6 +543,21 @@ describe('$modal', function () {
             return 'Content from resolve';
           }
         }));
+
+        expect($document).toHaveModalOpenWithContent('Content from resolve', 'div');
+      });
+
+      it('should resolve string references to injectables', function () {
+        open({
+          controller: function($scope, $foo) {
+            $scope.value = 'Content from resolve';
+            expect($foo).toBe($modal);
+          },
+          resolve: {
+            $foo: '$modal'
+          },
+          template: '<div>{{value}}</div>'
+        });
 
         expect($document).toHaveModalOpenWithContent('Content from resolve', 'div');
       });
@@ -715,6 +765,29 @@ describe('$modal', function () {
         expect($document.find('.modal-backdrop')).not.toHaveClass('fade');
       });
 
+    });
+
+    describe('openedClass', function () {
+
+      it('should add the modal-open class to the body element by default', function () {
+        open({
+          template: '<div>dummy modal</div>'
+        });
+
+        expect($document.find('body')).toHaveClass('modal-open');
+      });
+
+      it('should add the custom class to the body element', function () {
+        open({
+          template: '<div>dummy modal</div>',
+          openedClass: 'foo'
+        });
+
+        var body = $document.find('body');
+
+        expect(body).toHaveClass('foo');
+        expect(body).not.toHaveClass('modal-open');
+      });
     });
 
   });

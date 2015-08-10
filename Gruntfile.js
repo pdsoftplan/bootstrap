@@ -12,7 +12,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-conventional-changelog');
-  grunt.loadNpmTasks('grunt-ngdocs');
   grunt.loadNpmTasks('grunt-ddescribe-iit');
 
   // Project configuration.
@@ -140,12 +139,14 @@ module.exports = function(grunt) {
       },
       jenkins: {
         singleRun: true,
+        autoWatch: false,
         colors: false,
         reporters: ['dots', 'junit'],
         browsers: ['Chrome', 'ChromeCanary', 'Firefox', 'Opera', '/Users/jenkins/bin/safari.sh']
       },
       travis: {
         singleRun: true,
+        autoWatch: false,
         reporters: ['dots'],
         browsers: ['Firefox']
       },
@@ -178,25 +179,6 @@ module.exports = function(grunt) {
         'grunt version:minor:"SNAPSHOT"',
         'git commit package.json -m "chore(release): Starting v%version%"'
       ]
-    },
-    ngdocs: {
-      options: {
-        dest: 'dist/docs',
-        scripts: [
-          'angular.js',
-          '<%= concat.dist_tpls.dest %>'
-        ],
-        styles: [
-          'docs/css/style.css'
-        ],
-        navTemplate: 'docs/nav.html',
-        title: 'ui-bootstrap',
-        html5Mode: false
-      },
-      api: {
-        src: ['src/**/*.js', 'src/**/*.ngdoc'],
-        title: 'API Documentation'
-      }
     },
     'ddescribe-iit': {
       files: [
