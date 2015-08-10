@@ -226,21 +226,13 @@ angular.module('ui.bootstrap.tabs', [])
         });
       }
 
-      scope.select = function() {
-        if ( !scope.disabled ) {
-          scope.active = true;
-        }
-      };
-
-      scope.select = function() {
-        if ( !scope.disabled ) {
-          scope.active = true;
-        }
-      };
       tabsetCtrl.addTab(scope);
       scope.$on('$destroy', function() {
         tabsetCtrl.removeTab(scope);
-      });      if ( attrs.id ) {        elm.removeAttr('id');
+      });
+      
+      if ( attrs.id ) {
+        elm.removeAttr('id');
       }
 
       scope.select = function() {
@@ -304,28 +296,27 @@ angular.module('ui.bootstrap.tabs', [])
     var aElements = tab.parent().parent().find('ul').find('a');
     //set keydown events on tabList item for navigating and selection tabs
     aElements.on('keyup', function (e) {
-        var aElement = e.target;
-        var tabElement = aElement.parentNode;
-        switch (e.which) {
-          case 37:case 38:
+      var aElement = e.target;
+      var tabElement = aElement.parentNode;
+      switch (e.which) {
+        case 37: case 38:
           if (previousElementSibling(tabElement) != null) {
             previousElementSibling(tabElement).querySelector('a').focus();
           } else {
             aElements[aElements.length - 1].focus();
           }
           break;
-          case 39: case 40:
-          if (nextElementSibling(tabElement) != null) {
+        case 39: case 40:
+          if (nextElementSibling(tabElement) !== null) {
             nextElementSibling(tabElement).querySelector('a').focus();
           } else {
             aElements[0].focus();
           }
           break;
-          case 13:
-            aElement.click();
-        }
+        case 13:
+          aElement.click();
       }
-    );
+    });
   }
 
   function nextElementSibling(element) {

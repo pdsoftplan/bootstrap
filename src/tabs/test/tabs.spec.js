@@ -96,11 +96,9 @@ describe('tabs', function() {
       titles().eq(1).find('a').click();
       expect(scope.deselectFirst).toHaveBeenCalled();
     });
-
   });
 
   describe('accessibility', function() {
-
     beforeEach(inject(function($compile, $rootScope) {
       scope = $rootScope.$new();
       scope.tabs = [
