@@ -1,4 +1,4 @@
-angular.module('ui.bootstrap.demo').controller('ModalDemoCtrl', function ($scope, $modal, $log) {
+angular.module('ui.bootstrap.demo').controller('ModalDemoCtrl', function ($scope, $uibModal, $log) {
 
   $scope.items = ['item1', 'item2', 'item3'];
 
@@ -6,7 +6,7 @@ angular.module('ui.bootstrap.demo').controller('ModalDemoCtrl', function ($scope
 
   $scope.open = function (size) {
 
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       animation: $scope.animationsEnabled,
       templateUrl: 'myModalContent.html',
       controller: 'ModalInstanceCtrl',
@@ -32,9 +32,9 @@ angular.module('ui.bootstrap.demo').controller('ModalDemoCtrl', function ($scope
 });
 
 // Please note that $modalInstance represents a modal window (instance) dependency.
-// It is not the same as the $modal service used above.
+// It is not the same as the $uibModal service used above.
 
-angular.module('ui.bootstrap.demo').controller('ModalInstanceCtrl', function ($scope, $modalInstance, items) {
+angular.module('ui.bootstrap.demo').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items) {
 
   $scope.items = items;
   $scope.selected = {
@@ -42,10 +42,10 @@ angular.module('ui.bootstrap.demo').controller('ModalInstanceCtrl', function ($s
   };
 
   $scope.ok = function () {
-    $modalInstance.close($scope.selected.item);
+    $uibModalInstance.close($scope.selected.item);
   };
 
   $scope.cancel = function () {
-    $modalInstance.dismiss('cancel');
+    $uibModalInstance.dismiss('cancel');
   };
 });

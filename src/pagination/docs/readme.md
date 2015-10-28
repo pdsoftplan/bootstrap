@@ -3,7 +3,7 @@ A lightweight pagination directive that is focused on ... providing pagination &
 
 ### Pagination Settings ###
 
-Settings can be provided as attributes in the `<pagination>` or globally configured through the `paginationConfig`.
+Settings can be provided as attributes in the `<uib-pagination>` or globally configured through the `uibPaginationConfig`.
 
  * `ng-change`
  	:
@@ -62,12 +62,12 @@ Settings can be provided as attributes in the `<pagination>` or globally configu
  	Text for Last button.
 
  * `template-url`
-  _(Default: 'template/pagination/pagination.html') :
+  _(Default: 'template/pagination/pagination.html')_ :
   Override the template for the component with a custom provided template
 
 ### Pager Settings ###
 
-Settings can be provided as attributes in the `<pager>` or globally configured through the `pagerConfig`.  
+Settings can be provided as attributes in the `<uib-pager>` or globally configured through the `uibPagerConfig`.  
 For `ng-model`, `total-items`, `items-per-page` and `num-pages` see pagination settings. Other settings are:
 
  * `align`
@@ -85,3 +85,7 @@ For `ng-model`, `total-items`, `items-per-page` and `num-pages` see pagination s
  * `template-url`
   _(Default: 'template/pagination/pager.html') :
   Override the template for the component with a custom provided template
+
+ * `ng-disabled` <i class="glyphicon glyphicon-eye-open"></i>
+  :
+  Used to disable the pager component

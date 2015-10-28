@@ -1,9 +1,12 @@
-Alert is an AngularJS-version of bootstrap's alert.
+This directive can be used both to generate alerts from static and dynamic model data (using the `ng-repeat` directive).
 
-This directive can be used to generate alerts from the dynamic model data (using the `ng-repeat` directive);
+### uib-alert settings
 
-The presence of the `close` attribute determines if a close button is displayed.
-
-The optional `dismiss-on-timeout` attribute takes the number of milliseconds that specify timeout duration, after which the alert will be closed.
-
-The optional `template-url` attribute allows the user to override the default template with a custom template on an instance by instance basis
+  * `close` _(Default: `none`)_ -
+    A callback function that gets fired when an `alert` is closed. If the attribute exists, a close button is displayed as well.
+  * `dismiss-on-timeout` _(Default: `none`)(Optional)_ -
+    Takes the number of milliseconds that specify the timeout duration, after which the alert will be closed. This attribute requires the presence of the `close` attribute.
+  * `template-url` _(Default: `template/alert/alert.html`)_ -
+    Add the ability to override the template used in the component.
+  * `type` _(Default: `warning`)_ -
+    Defines the type of the alert. Go to [bootstrap page](http://getbootstrap.com/components/#alerts) to see the type of alerts available.

@@ -1,14 +1,15 @@
-describe('timepicker directive', function () {
-  var $rootScope, $compile, element;
+describe('timepicker directive', function() {
+  var $rootScope, $compile, $templateCache, element;
 
   beforeEach(module('ui.bootstrap.timepicker'));
   beforeEach(module('template/timepicker/timepicker.html'));
-  beforeEach(inject(function(_$compile_, _$rootScope_) {
+  beforeEach(inject(function(_$compile_, _$rootScope_, _$templateCache_) {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
     $rootScope.time = newTime(14, 40);
+    $templateCache = _$templateCache_;
 
-    element = $compile('<timepicker ng-model="time"></timepicker>')($rootScope);
+    element = $compile('<uib-timepicker ng-model="time"></uib-timepicker>')($rootScope);
     $rootScope.$digest();
   }));
 
@@ -25,8 +26,8 @@ describe('timepicker directive', function () {
     for (var i = 0; i < 2; i ++) {
       state.push(inputs.eq(i).val());
     }
-    if ( withoutMeridian !== true ) {
-      state.push( getMeridianButton().text() );
+    if (withoutMeridian !== true) {
+      state.push(getMeridianButton().text());
     }
     return state;
   }
@@ -36,7 +37,7 @@ describe('timepicker directive', function () {
   }
 
   function getArrow(isUp, tdIndex) {
-    return element.find('tr').eq( (isUp) ? 0 : 2 ).find('td').eq( tdIndex ).find('a').eq(0);
+    return element.find('tr').eq(isUp ? 0 : 2).find('td').eq(tdIndex).find('a').eq(0);
   }
 
   function getHoursButton(isUp) {
@@ -106,7 +107,7 @@ describe('timepicker directive', function () {
 
   it('has `selected` current time when model is initially cleared', function() {
     $rootScope.time = null;
-    element = $compile('<timepicker ng-model="time"></timepicker>')($rootScope);
+    element = $compile('<uib-timepicker ng-model="time"></uib-timepicker>')($rootScope);
     $rootScope.$digest();
 
     expect($rootScope.time).toBe(null);
@@ -271,7 +272,7 @@ describe('timepicker directive', function () {
   });
 
   it('changes only the time part when minutes change', function() {
-    element = $compile('<timepicker ng-model="time" minute-step="15"></timepicker>')($rootScope);
+    element = $compile('<uib-timepicker ng-model="time" minute-step="15"></uib-timepicker>')($rootScope);
     $rootScope.time = newTime(0, 0);
     $rootScope.$digest();
 
@@ -462,12 +463,12 @@ describe('timepicker directive', function () {
     expect(getModelState()).toEqual([14, 40]);
   });
 
-  describe('attributes', function () {
+  describe('attributes', function() {
     beforeEach(function() {
       $rootScope.hstep = 2;
       $rootScope.mstep = 30;
       $rootScope.time = newTime(14, 0);
-      element = $compile('<timepicker ng-model="time" hour-step="hstep" minute-step="mstep"></timepicker>')($rootScope);
+      element = $compile('<uib-timepicker ng-model="time" hour-step="hstep" minute-step="mstep"></uib-timepicker>')($rootScope);
       $rootScope.$digest();
     });
 
@@ -626,11 +627,11 @@ describe('timepicker directive', function () {
 
   });
 
-  describe('12 / 24 hour mode', function () {
+  describe('12 / 24 hour mode', function() {
     beforeEach(function() {
       $rootScope.meridian = false;
       $rootScope.time = newTime(14, 10);
-      element = $compile('<timepicker ng-model="time" show-meridian="meridian"></timepicker>')($rootScope);
+      element = $compile('<uib-timepicker ng-model="time" show-meridian="meridian"></uib-timepicker>')($rootScope);
       $rootScope.$digest();
     });
 
@@ -662,7 +663,7 @@ describe('timepicker directive', function () {
 
     it('handles correctly initially empty model on parent element', function() {
       $rootScope.time = null;
-      element = $compile('<span ng-model="time"><timepicker show-meridian="meridian"></timepicker></span>')($rootScope);
+      element = $compile('<span ng-model="time"><uib-timepicker show-meridian="meridian"></uib-timepicker></span>')($rootScope);
       $rootScope.$digest();
 
       expect($rootScope.time).toBe(null);
@@ -672,15 +673,15 @@ describe('timepicker directive', function () {
   describe('`meridians` attribute', function() {
     beforeEach(inject(function() {
       $rootScope.meridiansArray = ['am', 'pm'];
-      element = $compile('<timepicker ng-model="time" meridians="meridiansArray"></timepicker>')($rootScope);
+      element = $compile('<uib-timepicker ng-model="time" meridians="meridiansArray"></uib-timepicker>')($rootScope);
       $rootScope.$digest();
     }));
 
-    it('displays correctly', function () {
+    it('displays correctly', function() {
       expect(getTimeState()[2]).toBe('pm');
     });
 
-    it('toggles correctly', function () {
+    it('toggles correctly', function() {
       $rootScope.time = newTime(2, 40);
       $rootScope.$digest();
       expect(getTimeState()[2]).toBe('am');
@@ -690,11 +691,11 @@ describe('timepicker directive', function () {
   describe('`readonly-input` attribute', function() {
     beforeEach(inject(function() {
       $rootScope.meridiansArray = ['am', 'pm'];
-      element = $compile('<timepicker ng-model="time" readonly-input="true"></timepicker>')($rootScope);
+      element = $compile('<uib-timepicker ng-model="time" readonly-input="true"></uib-timepicker>')($rootScope);
       $rootScope.$digest();
     }));
 
-    it('should make inputs readonly', function () {
+    it('should make inputs readonly', function() {
       var inputs = element.find('input');
       expect(inputs.eq(0).attr('readonly')).toBe('readonly');
       expect(inputs.eq(1).attr('readonly')).toBe('readonly');
@@ -703,20 +704,20 @@ describe('timepicker directive', function () {
 
   describe('setting timepickerConfig steps', function() {
     var originalConfig = {};
-    beforeEach(inject(function(_$compile_, _$rootScope_, timepickerConfig) {
-      angular.extend(originalConfig, timepickerConfig);
-      timepickerConfig.hourStep = 2;
-      timepickerConfig.minuteStep = 10;
-      timepickerConfig.showMeridian = false;
-      element = $compile('<timepicker ng-model="time"></timepicker>')($rootScope);
+    beforeEach(inject(function(_$compile_, _$rootScope_, uibTimepickerConfig) {
+      angular.extend(originalConfig, uibTimepickerConfig);
+      uibTimepickerConfig.hourStep = 2;
+      uibTimepickerConfig.minuteStep = 10;
+      uibTimepickerConfig.showMeridian = false;
+      element = $compile('<uib-timepicker ng-model="time"></uib-timepicker>')($rootScope);
       $rootScope.$digest();
     }));
-    afterEach(inject(function(timepickerConfig) {
+    afterEach(inject(function(uibTimepickerConfig) {
       // return it to the original state
-      angular.extend(timepickerConfig, originalConfig);
+      angular.extend(uibTimepickerConfig, originalConfig);
     }));
 
-    it('does not affect the initial value', function () {
+    it('does not affect the initial value', function() {
       expect(getTimeState(true)).toEqual(['14', '40']);
       expect(getModelState()).toEqual([14, 40]);
     });
@@ -750,24 +751,24 @@ describe('timepicker directive', function () {
 
   describe('setting timepickerConfig meridian labels', function() {
     var originalConfig = {};
-    beforeEach(inject(function(_$compile_, _$rootScope_, timepickerConfig) {
-      angular.extend(originalConfig, timepickerConfig);
-      timepickerConfig.meridians = ['π.μ.', 'μ.μ.'];
-      timepickerConfig.showMeridian = true;
-      element = $compile('<timepicker ng-model="time"></timepicker>')($rootScope);
+    beforeEach(inject(function(_$compile_, _$rootScope_, uibTimepickerConfig) {
+      angular.extend(originalConfig, uibTimepickerConfig);
+      uibTimepickerConfig.meridians = ['π.μ.', 'μ.μ.'];
+      uibTimepickerConfig.showMeridian = true;
+      element = $compile('<uib-timepicker ng-model="time"></uib-timepicker>')($rootScope);
       $rootScope.$digest();
     }));
-    afterEach(inject(function(timepickerConfig) {
+    afterEach(inject(function(uibTimepickerConfig) {
       // return it to the original state
-      angular.extend(timepickerConfig, originalConfig);
+      angular.extend(uibTimepickerConfig, originalConfig);
     }));
 
-    it('displays correctly', function () {
+    it('displays correctly', function() {
       expect(getTimeState()).toEqual(['02', '40', 'μ.μ.']);
       expect(getModelState()).toEqual([14, 40]);
     });
 
-    it('toggles correctly', function () {
+    it('toggles correctly', function() {
       $rootScope.time = newTime(2, 40);
       $rootScope.$digest();
 
@@ -776,28 +777,28 @@ describe('timepicker directive', function () {
     });
   });
 
-  describe('$formatter', function () {
+  describe('$formatter', function() {
     var ngModel,
       date;
 
-    beforeEach(function () {
+    beforeEach(function() {
       ngModel = element.controller('ngModel');
       date = new Date('Mon Mar 23 2015 14:40:11 GMT-0700 (PDT)');
     });
 
-    it('should have one formatter', function () {
+    it('should have one formatter', function() {
       expect(ngModel.$formatters.length).toBe(1);
     });
 
-    it('should convert a date to a new reference representing the same date', function () {
+    it('should convert a date to a new reference representing the same date', function() {
       expect(ngModel.$formatters[0](date)).toEqual(date);
     });
 
-    it('should convert a valid date string to a date object', function () {
+    it('should convert a valid date string to a date object', function() {
       expect(ngModel.$formatters[0]('Mon Mar 23 2015 14:40:11 GMT-0700 (PDT)')).toEqual(date);
     });
 
-    it('should set falsy values as null', function () {
+    it('should set falsy values as null', function() {
       expect(ngModel.$formatters[0](undefined)).toBe(null);
       expect(ngModel.$formatters[0](null)).toBe(null);
       expect(ngModel.$formatters[0]('')).toBe(null);
@@ -806,11 +807,11 @@ describe('timepicker directive', function () {
     });
   });
 
-  describe('user input validation', function () {
+  describe('user input validation', function() {
     var changeInputValueTo;
 
     beforeEach(inject(function($sniffer) {
-      changeInputValueTo = function (inputEl, value) {
+      changeInputValueTo = function(inputEl, value) {
         inputEl.val(value);
         inputEl.trigger($sniffer.hasEvent('input') ? 'input' : 'change');
         $rootScope.$digest();
@@ -886,9 +887,41 @@ describe('timepicker directive', function () {
       expect(element.hasClass('ng-invalid-time')).toBe(false);
     });
 
+    it('leaves view alone when hours are invalid and minutes are updated', function() {
+      var hoursEl = getHoursInputEl(),
+        minutesEl = getMinutesInputEl();
+
+      changeInputValueTo(hoursEl, '25');
+      hoursEl.blur();
+      $rootScope.$digest();
+      expect(getTimeState()).toEqual(['25', '40', 'PM']);
+
+      changeInputValueTo(minutesEl, '2');
+      minutesEl.blur();
+      $rootScope.$digest();
+      expect(getTimeState()).toEqual(['25', '2', 'PM']);
+    });
+
+    it('leaves view alone when minutes are invalid and hours are updated', function() {
+      var hoursEl = getHoursInputEl(),
+        minutesEl = getMinutesInputEl();
+
+      changeInputValueTo(minutesEl, '61');
+      minutesEl.blur();
+      $rootScope.$digest();
+      expect($rootScope.time).toBe(null);
+      expect(getTimeState()).toEqual(['02', '61', 'PM']);
+
+      changeInputValueTo(hoursEl, '2');
+      hoursEl.blur();
+      $rootScope.$digest();
+      expect($rootScope.time).toBe(null);
+      expect(getTimeState()).toEqual(['2', '61', 'PM']);
+    });
+
     it('handles 12/24H mode change', function() {
       $rootScope.meridian = true;
-      element = $compile('<timepicker ng-model="time" show-meridian="meridian"></timepicker>')($rootScope);
+      element = $compile('<uib-timepicker ng-model="time" show-meridian="meridian"></uib-timepicker>')($rootScope);
       $rootScope.$digest();
 
       var el = getHoursInputEl();
@@ -904,11 +937,26 @@ describe('timepicker directive', function () {
       expect(getModelState()).toEqual([16, 40]);
       expect(element.hasClass('ng-invalid-time')).toBe(false);
     });
+
+    it('should have a default tabindex of 0', function() {
+      element = $compile('<uib-timepicker ng-model="time"></uib-timepicker>')($rootScope);
+      $rootScope.$digest();
+
+      expect(element.isolateScope().tabindex).toBe(0);
+    });
+
+    it('should have the correct tabindex', function() {
+      element = $compile('<uib-timepicker ng-model="time" tabindex="5"></uib-timepicker>')($rootScope);
+      $rootScope.$digest();
+
+      expect(element.attr('tabindex')).toBe(undefined);
+      expect(element.isolateScope().tabindex).toBe('5');
+    });
   });
 
   describe('when model is not a Date', function() {
     beforeEach(inject(function() {
-      element = $compile('<timepicker ng-model="time"></timepicker>')($rootScope);
+      element = $compile('<uib-timepicker ng-model="time"></uib-timepicker>')($rootScope);
     }));
 
     it('should not be invalid when the model is null', function() {
@@ -960,7 +1008,7 @@ describe('timepicker directive', function () {
   describe('use with `ng-required` directive', function() {
     beforeEach(inject(function() {
       $rootScope.time = null;
-      element = $compile('<timepicker ng-model="time" ng-required="true"></timepicker>')($rootScope);
+      element = $compile('<uib-timepicker ng-model="time" ng-required="true"></uib-timepicker>')($rootScope);
       $rootScope.$digest();
     }));
 
@@ -979,7 +1027,7 @@ describe('timepicker directive', function () {
     beforeEach(inject(function() {
       $rootScope.changeHandler = jasmine.createSpy('changeHandler');
       $rootScope.time = new Date();
-      element = $compile('<timepicker ng-model="time" ng-change="changeHandler()"></timepicker>')($rootScope);
+      element = $compile('<uib-timepicker ng-model="time" ng-change="changeHandler()"></uib-timepicker>')($rootScope);
       $rootScope.$digest();
     }));
 
@@ -1007,7 +1055,7 @@ describe('timepicker directive', function () {
   describe('when used with min', function() {
     var changeInputValueTo;
     beforeEach(inject(function($sniffer) {
-      element = $compile('<timepicker ng-model="time" min="min"></timepicker>')($rootScope);
+      element = $compile('<uib-timepicker ng-model="time" min="min"></uib-timepicker>')($rootScope);
       $rootScope.$digest();
       changeInputValueTo = function(inputEl, value) {
         inputEl.val(value);
@@ -1335,7 +1383,7 @@ describe('timepicker directive', function () {
   describe('when used with max', function() {
     var changeInputValueTo;
     beforeEach(inject(function($sniffer) {
-      element = $compile('<timepicker ng-model="time" max="max"></timepicker>')($rootScope);
+      element = $compile('<uib-timepicker ng-model="time" max="max"></uib-timepicker>')($rootScope);
       $rootScope.$digest();
       changeInputValueTo = function (inputEl, value) {
         inputEl.val(value);
@@ -1660,5 +1708,30 @@ describe('timepicker directive', function () {
       expect(element.hasClass('ng-invalid-time')).toBe(false);
     });
   });
-});
 
+  describe('custom template and controllerAs', function() {
+    it('should allow custom templates', function() {
+      $templateCache.put('foo/bar.html', '<div>baz</div>');
+
+      element = $compile('<uib-timepicker ng-model="time" template-url="foo/bar.html"></uib-timepicker>')($rootScope);
+      $rootScope.$digest();
+      expect(element[0].tagName.toLowerCase()).toBe('div');
+      expect(element.html()).toBe('baz');
+    });
+
+    it('should expose the controller on the view', function() {
+      $templateCache.put('template/timepicker/timepicker.html', '<div><div>{{timepicker.text}}</div></div>');
+
+      element = $compile('<uib-timepicker ng-model="time"></uib-timepicker>')($rootScope);
+      $rootScope.$digest();
+
+      var ctrl = element.controller('uibTimepicker');
+      expect(ctrl).toBeDefined();
+
+      ctrl.text = 'foo';
+      $rootScope.$digest();
+
+      expect(element.html()).toBe('<div class="ng-binding">foo</div>');
+    });
+  });
+});

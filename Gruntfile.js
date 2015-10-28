@@ -18,7 +18,7 @@ module.exports = function(grunt) {
   grunt.util.linefeed = '\n';
 
   grunt.initConfig({
-    ngversion: '1.4.3',
+    ngversion: '1.4.7',
     bsversion: '3.1.1',
     modules: [],//to be filled in by build task
     pkg: grunt.file.readJSON('package.json'),
@@ -157,10 +157,15 @@ module.exports = function(grunt) {
         reporters: ['progress', 'coverage']
       }
     },
-    changelog: {
+    conventionalChangelog: {
       options: {
-        dest: 'CHANGELOG.md',
+        changelogOpts: {
+          preset: 'angular'
+        },
         templateFile: 'misc/changelog.tpl.md'
+      },
+      release: {
+        src: 'CHANGELOG.md'
       }
     },
     shell: {
@@ -169,7 +174,7 @@ module.exports = function(grunt) {
       'release-prepare': [
         'grunt before-test after-test',
         'grunt version', //remove "-SNAPSHOT"
-        'grunt changelog'
+        'grunt conventionalChangelog'
       ],
       'release-complete': [
         'git commit CHANGELOG.md package.json -m "chore(release): v%version%"',
@@ -348,7 +353,7 @@ module.exports = function(grunt) {
     grunt.config('concat.dist_tpls.src', grunt.config('concat.dist_tpls.src')
                  .concat(srcFiles).concat(tpljsFiles));
 
-    grunt.task.run(['concat', 'uglify', 'makeModuleMappingFile', 'makeRawFilesJs']);
+    grunt.task.run(['concat', 'uglify', 'makeModuleMappingFile', 'makeRawFilesJs', 'makeVersionsMappingFile']);
   });
 
   grunt.registerTask('test', 'Run tests on singleRun karma server', function () {
@@ -385,6 +390,33 @@ module.exports = function(grunt) {
 
     genRawFilesJs(grunt, jsFilename, _.flatten(grunt.config('concat.dist_tpls.src')),
                   grunt.config('meta.banner'), grunt.config('meta.cssFileBanner'));
+  });
+
+  grunt.registerTask('makeVersionsMappingFile', function () {
+    var done = this.async();
+
+    var exec = require('child_process').exec;
+
+    var versionsMappingFile = 'dist/versions-mapping.json';
+
+    exec('git tag --sort -version:refname', function(error, stdout, stderr) {
+      // Let's remove the oldest 14 versions.
+      var versions = stdout.split('\n').slice(0, -14);
+      var jsContent = versions.map(function(version) {
+        return {
+          version: version,
+          url: '/bootstrap/versioned-docs/' + version
+        };
+      });
+      jsContent.unshift({
+        version: 'Current',
+        url: '/bootstrap'
+      });
+      grunt.file.write(versionsMappingFile, JSON.stringify(jsContent));
+      grunt.log.writeln('File ' + versionsMappingFile.cyan + ' created.');
+      done();
+    });
+
   });
 
   /**

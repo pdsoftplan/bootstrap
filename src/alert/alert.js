@@ -1,14 +1,21 @@
 angular.module('ui.bootstrap.alert', [])
 
-.controller('AlertController', ['$scope', '$attrs', function($scope, $attrs) {
+.controller('UibAlertController', ['$scope', '$attrs', '$interpolate', '$timeout', function($scope, $attrs, $interpolate, $timeout) {
   $scope.closeable = !!$attrs.close;
-  this.close = $scope.close;
+
+  var dismissOnTimeout = angular.isDefined($attrs.dismissOnTimeout) ?
+    $interpolate($attrs.dismissOnTimeout)($scope.$parent) : null;
+
+  if (dismissOnTimeout) {
+    $timeout(function() {
+      $scope.close();
+    }, parseInt(dismissOnTimeout, 10));
+  }
 }])
 
-.directive('alert', function() {
+.directive('uibAlert', function() {
   return {
-    restrict: 'EA',
-    controller: 'AlertController',
+    controller: 'UibAlertController',
     controllerAs: 'alert',
     templateUrl: function(element, attrs) {
       return attrs.templateUrl || 'template/alert/alert.html';
@@ -20,15 +27,4 @@ angular.module('ui.bootstrap.alert', [])
       close: '&'
     }
   };
-})
-
-.directive('dismissOnTimeout', ['$timeout', function($timeout) {
-  return {
-    require: 'alert',
-    link: function(scope, element, attrs, alertCtrl) {
-      $timeout(function() {
-        alertCtrl.close();
-      }, parseInt(attrs.dismissOnTimeout, 10));
-    }
-  };
-}]);
+});

@@ -1,17 +1,9 @@
-/**
-* @ngdoc overview
-* @name ui.bootstrap.carousel
-*
-* @description
-* AngularJS version of an image carousel.
-*
-*/
 angular.module('ui.bootstrap.carousel', [])
-.controller('CarouselController', ['$scope', '$element', '$interval', '$animate', function ($scope, $element, $interval, $animate) {
+
+.controller('UibCarouselController', ['$scope', '$element', '$interval', '$animate', function($scope, $element, $interval, $animate) {
   var self = this,
     slides = self.slides = $scope.slides = [],
     NEW_ANIMATE = angular.version.minor >= 4,
-    NO_TRANSITION = 'uib-noTransition',
     SLIDE_DIRECTION = 'uib-slideDirection',
     currentIndex = -1,
     currentInterval, isPlaying;
@@ -46,7 +38,7 @@ angular.module('ui.bootstrap.carousel', [])
 
       $scope.$currentTransition = true;
       if (NEW_ANIMATE) {
-        $animate.on('addClass', slide.$element, function (element, phase) {
+        $animate.on('addClass', slide.$element, function(element, phase) {
           if (phase === 'close') {
             $scope.$currentTransition = null;
             $animate.off('addClass', element);
@@ -66,17 +58,12 @@ angular.module('ui.bootstrap.carousel', [])
     restartTimer();
   }
 
-  $scope.$on('$destroy', function () {
-    destroyed = true;
-  });
-
   function getSlideByIndex(index) {
     if (angular.isUndefined(slides[index].index)) {
       return slides[index];
     }
-    var i, len = slides.length;
-    for (i = 0; i < slides.length; ++i) {
-      if (slides[i].index == index) {
+    for (var i = 0, l = slides.length; i < l; ++i) {
+      if (slides[i].index === index) {
         return slides[i];
       }
     }
@@ -108,7 +95,7 @@ angular.module('ui.bootstrap.carousel', [])
   $scope.prev = function() {
     var newIndex = self.getCurrentIndex() - 1 < 0 ? slides.length - 1 : self.getCurrentIndex() - 1;
 
-    if ($scope.noWrap() && newIndex === slides.length - 1){
+    if ($scope.noWrap() && newIndex === slides.length - 1) {
       $scope.pause();
       return;
     }
@@ -121,7 +108,11 @@ angular.module('ui.bootstrap.carousel', [])
   };
 
   $scope.$watch('interval', restartTimer);
-  $scope.$on('$destroy', resetTimer);
+  $scope.$watchCollection('slides', resetTransition);
+  $scope.$on('$destroy', function() {
+    destroyed = true;
+    resetTimer();
+  });
 
   function restartTimer() {
     resetTimer();
@@ -147,6 +138,12 @@ angular.module('ui.bootstrap.carousel', [])
     }
   }
 
+  function resetTransition(slides) {
+    if (!slides.length) {
+      $scope.$currentTransition = null;
+    }
+  }
+
   $scope.play = function() {
     if (!isPlaying) {
       isPlaying = true;
@@ -164,9 +161,9 @@ angular.module('ui.bootstrap.carousel', [])
     slide.$element = element;
     slides.push(slide);
     //if this is the first slide or the slide is set to active, select it
-    if(slides.length === 1 || slide.active) {
-      self.select(slides[slides.length-1]);
-      if (slides.length == 1) {
+    if (slides.length === 1 || slide.active) {
+      self.select(slides[slides.length - 1]);
+      if (slides.length === 1) {
         $scope.play();
       }
     } else {
@@ -185,14 +182,14 @@ angular.module('ui.bootstrap.carousel', [])
     slides.splice(index, 1);
     if (slides.length > 0 && slide.active) {
       if (index >= slides.length) {
-        self.select(slides[index-1]);
+        self.select(slides[index - 1]);
       } else {
         self.select(slides[index]);
       }
     } else if (currentIndex > index) {
       currentIndex--;
     }
-    
+
     //clean the currentSlide when no more slide
     if (slides.length === 0) {
       self.currentSlide = null;
@@ -200,57 +197,17 @@ angular.module('ui.bootstrap.carousel', [])
   };
 
   $scope.$watch('noTransition', function(noTransition) {
-    $element.data(NO_TRANSITION, noTransition);
+    $animate.enabled($element, noTransition);
   });
 
 }])
 
-/**
- * @ngdoc directive
- * @name ui.bootstrap.carousel.directive:carousel
- * @restrict EA
- *
- * @description
- * Carousel is the outer container for a set of image 'slides' to showcase.
- *
- * @param {number=} interval The time, in milliseconds, that it will take the carousel to go to the next slide.
- * @param {boolean=} noTransition Whether to disable transitions on the carousel.
- * @param {boolean=} noPause Whether to disable pausing on the carousel (by default, the carousel interval pauses on hover).
- *
- * @example
-<example module="ui.bootstrap">
-  <file name="index.html">
-    <carousel>
-      <slide>
-        <img src="http://placekitten.com/150/150" style="margin:auto;">
-        <div class="carousel-caption">
-          <p>Beautiful!</p>
-        </div>
-      </slide>
-      <slide>
-        <img src="http://placekitten.com/100/150" style="margin:auto;">
-        <div class="carousel-caption">
-          <p>D'aww!</p>
-        </div>
-      </slide>
-    </carousel>
-  </file>
-  <file name="demo.css">
-    .carousel-indicators {
-      top: auto;
-      bottom: 15px;
-    }
-  </file>
-</example>
- */
-.directive('carousel', [function() {
+.directive('uibCarousel', function() {
   return {
-    restrict: 'EA',
     transclude: true,
     replace: true,
-    controller: 'CarouselController',
+    controller: 'UibCarouselController',
     controllerAs: 'carousel',
-    require: 'carousel',
     templateUrl: function(element, attrs) {
       return attrs.templateUrl || 'template/carousel/carousel.html';
     },
@@ -261,54 +218,11 @@ angular.module('ui.bootstrap.carousel', [])
       noWrap: '&'
     }
   };
-}])
+})
 
-/**
- * @ngdoc directive
- * @name ui.bootstrap.carousel.directive:slide
- * @restrict EA
- *
- * @description
- * Creates a slide inside a {@link ui.bootstrap.carousel.directive:carousel carousel}.  Must be placed as a child of a carousel element.
- *
- * @param {boolean=} active Model binding, whether or not this slide is currently active.
- * @param {number=} index The index of the slide. The slides will be sorted by this parameter.
- *
- * @example
-<example module="ui.bootstrap">
-  <file name="index.html">
-<div ng-controller="CarouselDemoCtrl">
-  <carousel>
-    <slide ng-repeat="slide in slides" active="slide.active" index="$index">
-      <img ng-src="{{slide.image}}" style="margin:auto;">
-      <div class="carousel-caption">
-        <h4>Slide {{$index}}</h4>
-        <p>{{slide.text}}</p>
-      </div>
-    </slide>
-  </carousel>
-  Interval, in milliseconds: <input type="number" ng-model="myInterval">
-  <br />Enter a negative number to stop the interval.
-</div>
-  </file>
-  <file name="script.js">
-function CarouselDemoCtrl($scope) {
-  $scope.myInterval = 5000;
-}
-  </file>
-  <file name="demo.css">
-    .carousel-indicators {
-      top: auto;
-      bottom: 15px;
-    }
-  </file>
-</example>
-*/
-
-.directive('slide', function() {
+.directive('uibSlide', function() {
   return {
-    require: '^carousel',
-    restrict: 'EA',
+    require: '^uibCarousel',
     transclude: true,
     replace: true,
     templateUrl: function(element, attrs) {
@@ -316,6 +230,7 @@ function CarouselDemoCtrl($scope) {
     },
     scope: {
       active: '=?',
+      actual: '=?',
       index: '=?'
     },
     link: function (scope, element, attrs, carouselCtrl) {
@@ -337,8 +252,7 @@ function CarouselDemoCtrl($scope) {
 .animation('.item', [
          '$injector', '$animate',
 function ($injector, $animate) {
-  var NO_TRANSITION = 'uib-noTransition',
-    SLIDE_DIRECTION = 'uib-slideDirection',
+  var SLIDE_DIRECTION = 'uib-slideDirection',
     $animateCss = null;
 
   if ($injector.has('$animateCss')) {
@@ -353,10 +267,9 @@ function ($injector, $animate) {
   }
 
   return {
-    beforeAddClass: function (element, className, done) {
+    beforeAddClass: function(element, className, done) {
       // Due to transclusion, noTransition property is on parent's scope
-      if (className == 'active' && element.parent() &&
-          !element.parent().data(NO_TRANSITION)) {
+      if (className == 'active' && !$animate.enabled(element)) {
         var stopped = false;
         var direction = element.data(SLIDE_DIRECTION);
         var directionClass = direction == 'next' ? 'left' : 'right';
@@ -385,8 +298,7 @@ function ($injector, $animate) {
     },
     beforeRemoveClass: function (element, className, done) {
       // Due to transclusion, noTransition property is on parent's scope
-      if (className === 'active' && element.parent() &&
-          !element.parent().data(NO_TRANSITION)) {
+      if (className === 'active' && !$animate.enabled(element)) {
         var stopped = false;
         var direction = element.data(SLIDE_DIRECTION);
         var directionClass = direction == 'next' ? 'left' : 'right';
@@ -397,22 +309,18 @@ function ($injector, $animate) {
             .start()
             .done(removeClassFn);
         } else {
-          $animate.addClass(element, directionClass).then(function () {
+          $animate.addClass(element, directionClass).then(function() {
             if (!stopped) {
               removeClassFn();
             }
             done();
           });
         }
-        return function () {
+        return function() {
           stopped = true;
         };
       }
       done();
     }
   };
-
-}])
-
-
-;
+}]);

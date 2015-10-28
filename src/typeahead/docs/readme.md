@@ -24,7 +24,10 @@ The typeahead directives provide several attributes:
 * `typeahead-append-to-body` <i class="glyphicon glyphicon-eye-open"></i>
    _(Defaults: false)_ : Should the typeahead popup be appended to $body instead of the parent element?
 
-* `typeahead-editable` <i class="glyphicon glyphicon-eye-open"></i>
+* `typeahead-append-to-element-id`
+   _(Defaults: false)_ : Should the typeahead popup be appended to an element id instead of the parent element?
+
+* `typeahead-editable`
    _(Defaults: true)_ :
    Should it restrict model values to the ones selected from the popup only ?
    
@@ -60,6 +63,10 @@ The typeahead directives provide several attributes:
    :
    Set custom item template
 
+* `typeahead-popup-template-url`
+   _(Defaults: `template/typeahead/typeahead-popup.html`)_ :
+   Set custom popup template
+
 * `typeahead-wait-ms` <i class="glyphicon glyphicon-eye-open"></i>
    _(Defaults: 0)_ :
    Minimal wait time after last character typed before typeahead kicks-in
@@ -67,3 +74,7 @@ The typeahead directives provide several attributes:
 * `typeahead-select-on-blur`
    _(Defaults: false)_ :
    On blur, select the currently highlighted match
+
+* `typeahead-focus-on-select`
+   _(Defaults: true) :
+   On selection, focus the input element the typeahead directive is associated with

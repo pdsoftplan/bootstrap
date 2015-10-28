@@ -14,6 +14,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/<%= ngversion %>/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/<%= ngversion %>/angular-animate.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/<%= ngversion %>/angular-touch.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/<%= ngversion %>/angular-sanitize.js"></script>
     <script src="ui-bootstrap-tpls-<%= pkg.version%>.min.js"></script>
     <script src="assets/plunker.js"></script>
     <script src="assets/app.js"></script>
@@ -40,8 +41,8 @@
                 <a href="#top" role="button" class="navbar-brand">
                     UI Bootstrap
                 </a>
-                <li class="dropdown" dropdown>
-                    <a role="button" class="dropdown-toggle" dropdown-toggle>
+                <li class="dropdown" uib-dropdown>
+                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
                         Directives <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
@@ -49,9 +50,19 @@
                     </ul>
                 </li>
                 <li><a href="#getting_started">Getting started</a></li>
+                <li class="dropdown" uib-dropdown>
+                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
+                        Previous docs <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="version in oldDocs">
+                            <a ng-href="{{version.url}}">{{version.version}}</a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </nav>
-        <nav class="visible-xs" collapse="!isCollapsed">
+        <nav class="visible-xs" uib-collapse="!isCollapsed">
             <ul class="nav navbar-nav">
                 <li><a href="#getting_started" ng-click="isCollapsed = !isCollapsed">Getting started</a></li>
                 <li><a href="#directives_small" ng-click="isCollapsed = !isCollapsed">Directives</a></li>
@@ -175,9 +186,18 @@
                     <p>Please check <a href="https://github.com/angular-ui/bootstrap/wiki/FAQ" target="_blank">our FAQ section</a> for common problems / solutions.</p>
                     <h3>Reading the documentation</h3>
                     <p>
-                      Each of the directives provided in <code>ui-bootstrap</code> have documentation and interactive Plunker examples. There is also a list of settings which outline the default
-                      values of settings, and whether they are readonly. In addition to this, some settings have an eye icon next to them like this <i class="glyphicon glyphicon-eye-open"></i>. The
-                      eye means that the setting has an Angular <a href="https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$watch" title="Angular $watch" target="_blank">$watch</a> listener applied to it.
+                        Each of the components provided in <code>ui-bootstrap</code> have documentation and interactive Plunker examples.
+                    </p>
+                    <p>
+                        For the directives, we list the different attributes with their default values, and whether they are readonly. In addition to this, some settings
+                        have an eye icon next to them like this <i class="glyphicon glyphicon-eye-open"></i>. The eye means that the setting has an Angular
+                        <a href="https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$watch" title="Angular $watch" target="_blank">$watch</a> listener applied to it.
+                    </p>
+                    <p>
+                        For the services (you will recognize them with the <code>$</code> prefix), we list all the possible parameters you can pass to them and their default values if any.
+                    </p>
+                    <p>
+                        Also, some components have default values that you can override globally within a <code>.config</code> function for example.
                     </p>
                 </section>
                 <% demoModules.forEach(function(module) { %>
@@ -201,18 +221,18 @@
                                 <div class="pull-right">
                                     <button type="button" class="btn btn-info plunk-btn" ng-click="edit('<%= ngversion%>', '<%= bsversion %>', '<%= pkg.version%>', '<%= module.name %>')"><i class="glyphicon glyphicon-edit"></i> Edit in plunker</button>
                                 </div>
-                                <tabset>
-                                    <tab heading="Markup">
+                                <uib-tabset>
+                                    <uib-tab heading="Markup">
                                         <div plunker-content="markup">
                                             <pre ng-non-bindable><code data-language="html"><%- module.docs.html %></code></pre>
                                         </div>
-                                    </tab>
-                                    <tab heading="JavaScript">
+                                    </uib-tab>
+                                    <uib-tab heading="JavaScript">
                                         <div plunker-content="javascript">
                                             <pre ng-non-bindable><code data-language="javascript"><%- module.docs.js %></code></pre>
                                         </div>
-                                    </tab>
-                                </tabset>
+                                    </uib-tab>
+                                </uib-tabset>
                             </div>
                         </div>
                     </section>
@@ -241,8 +261,8 @@
             <label class="col-sm-3 control-label"><strong>Build</strong></label>
             <div class="col-sm-9">
               <span class="btn-group">
-                <button type="button" class="btn btn-default" ng-model="options.minified" btn-radio="true">Minified</button>
-                <button type="button" class="btn btn-default" ng-model="options.minified" btn-radio="false">Uncompressed</button>
+                <button type="button" class="btn btn-default" ng-model="options.minified" uib-btn-radio="true">Minified</button>
+                <button type="button" class="btn btn-default" ng-model="options.minified" uib-btn-radio="false">Uncompressed</button>
               </span>
               <small class="help-block">Use <b>Minified</b> version in your deployed application. <b>Uncompressed</b> source code is useful only for debugging and development purpose.</small>
             </div>
@@ -251,18 +271,17 @@
             <label class="col-sm-3 control-label"><strong>Include Templates</strong></label>
             <div class="col-sm-9">
               <span class="btn-group">
-                <button type="button" class="btn btn-default" ng-model="options.tpls" btn-radio="true">Yes</button>
-                <button type="button" class="btn btn-default" ng-model="options.tpls" btn-radio="false">No</button>
+                <button type="button" class="btn btn-default" ng-model="options.tpls" uib-btn-radio="true">Yes</button>
+                <button type="button" class="btn btn-default" ng-model="options.tpls" uib-btn-radio="false">No</button>
               </span>
               <small class="help-block">Whether you want to include the <i>default templates</i>, bundled with most of the directives. These templates are based on Bootstrap's markup and CSS.</small>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-3 control-label"><strong>Bower</strong></label>
+            <label class="col-sm-3 control-label"><strong>npm</strong></label>
             <div class="col-sm-9">
-              <small>If you are using Bower just run:</small>
-              <pre style="margin-bottom:0;">bower install angular-bootstrap</pre>
-              <small class="help-block"><a href="http://bower.io/" target="_blank">Bower</a> is a package manager for the web.</small>
+              <pre style="margin-bottom:0;">npm install angular-ui-bootstrap</pre>
+              <small class="help-block"><a href="https://www.npmjs.com/" target="_blank">npm</a> is a package manager for the web.</small>
             </div>
           </div>
         </form>
@@ -298,7 +317,7 @@
                style="width: 33%; border-radius: 0;"
                ng-class="{'btn-primary': module.<%= module.name %>}"
                ng-model="module.<%= module.name %>"
-               btn-checkbox
+               uib-btn-checkbox
                ng-change="selectedChanged('<%= module.name %>', module.<%= module.name %>)">
                   <%= module.displayName %>
               </button>

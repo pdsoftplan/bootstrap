@@ -1,9 +1,9 @@
-describe('date parser', function () {
+describe('date parser', function() {
   var dateParser;
 
   beforeEach(module('ui.bootstrap.dateparser'));
-  beforeEach(inject(function (_dateParser_) {
-    dateParser = _dateParser_;
+  beforeEach(inject(function (uibDateParser) {
+    dateParser = uibDateParser;
   }));
 
   function expectParse(input, format, date) {
@@ -71,7 +71,7 @@ describe('date parser', function () {
     it('should work correctly for `hh`', function() {
       expectParse('22.March.15.22', 'd.MMMM.yy.hh', undefined);
       expectParse('22.March.15.12', 'd.MMMM.yy.hh', new Date(2015, 2, 22, 12));
-      expectParse('8-March-1991-11', 'd-MMMM-yyyy-HH', new Date(1991, 2, 8, 11));
+      expectParse('8-March-1991-11', 'd-MMMM-yyyy-hh', new Date(1991, 2, 8, 11));
       expectParse('February/5/1980/00', 'MMMM/d/yyyy/hh', new Date(1980, 1, 5, 0));
       expectParse('1955/February/5 03', 'yyyy/MMMM/d hh', new Date(1955, 1, 5, 3));
       expectParse('11-08-13 23', 'd-MM-yy hh', undefined);
@@ -84,6 +84,14 @@ describe('date parser', function () {
       expectParse('February/5/1980/0', 'MMMM/d/yyyy/H', new Date(1980, 1, 5, 0));
       expectParse('1955/February/5 3', 'yyyy/MMMM/d H', new Date(1955, 1, 5, 3));
       expectParse('11-08-13 23', 'd-MM-yy H', new Date(2013, 7, 11, 23));
+    });
+
+    it('should work correctly for `h`', function() {
+      expectParse('22.March.15.12', 'd.MMMM.yy.h', new Date(2015, 2, 22, 12));
+      expectParse('8-March-1991-11', 'd-MMMM-yyyy-h', new Date(1991, 2, 8, 11));
+      expectParse('February/5/1980/0', 'MMMM/d/yyyy/h', new Date(1980, 1, 5, 0));
+      expectParse('1955/February/5 3', 'yyyy/MMMM/d h', new Date(1955, 1, 5, 3));
+      expectParse('11-08-13 3', 'd-MM-yy h', new Date(2013, 7, 11, 3));
     });
 
     it('should work correctly for `mm`', function() {
@@ -204,4 +212,15 @@ describe('date parser', function () {
   it('should not parse if no format is specified', function() {
     expect(dateParser.parse('21.08.1951', '')).toBe('21.08.1951');
   });
+
+  it('should reinitialize when locale changes', inject(function($locale) {
+    spyOn(dateParser, 'init').and.callThrough();
+    expect($locale.id).toBe('en-us');
+
+    $locale.id = 'en-uk';
+
+    dateParser.parse('22.March.15.22', 'd.MMMM.yy.s');
+
+    expect(dateParser.init).toHaveBeenCalled();
+  }));
 });

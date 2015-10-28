@@ -1,5 +1,5 @@
 angular.module('ui.bootstrap.pagination', [])
-.controller('PaginationController', ['$scope', '$attrs', '$parse', function ($scope, $attrs, $parse) {
+.controller('UibPaginationController', ['$scope', '$attrs', '$parse', function($scope, $attrs, $parse) {
   var self = this,
       ngModelCtrl = { $setViewValue: angular.noop }, // nullModelCtrl
       setNumPages = $attrs.numPages ? $parse($attrs.numPages).assign : angular.noop;
@@ -60,18 +60,20 @@ angular.module('ui.bootstrap.pagination', [])
     }
   };
 
-  $scope.getText = function( key ) {
+  $scope.getText = function(key) {
     return $scope[key + 'Text'] || self.config[key + 'Text'];
   };
+
   $scope.noPrevious = function() {
     return $scope.page === 1;
   };
+
   $scope.noNext = function() {
     return $scope.page === $scope.totalPages;
   };
 }])
 
-.constant('paginationConfig', {
+.constant('uibPaginationConfig', {
   itemsPerPage: 10,
   boundaryLinks: false,
   directionLinks: true,
@@ -82,7 +84,7 @@ angular.module('ui.bootstrap.pagination', [])
   rotate: true
 })
 
-.directive('pagination', ['$parse', 'paginationConfig', function($parse, paginationConfig) {
+.directive('uibPagination', ['$parse', 'uibPaginationConfig', function($parse, paginationConfig) {
   return {
     restrict: 'EA',
     scope: {
@@ -93,8 +95,8 @@ angular.module('ui.bootstrap.pagination', [])
       lastText: '@',
       ngDisabled:'='
     },
-    require: ['pagination', '?ngModel'],
-    controller: 'PaginationController',
+    require: ['uibPagination', '?ngModel'],
+    controller: 'UibPaginationController',
     controllerAs: 'pagination',
     templateUrl: function(element, attrs) {
       return attrs.templateUrl || 'template/pagination/pagination.html';
@@ -136,11 +138,11 @@ angular.module('ui.bootstrap.pagination', [])
 
         // Default page limits
         var startPage = 1, endPage = totalPages;
-        var isMaxSized = ( angular.isDefined(maxSize) && maxSize < totalPages );
+        var isMaxSized = angular.isDefined(maxSize) && maxSize < totalPages;
 
         // recompute if maxSize
-        if ( isMaxSized ) {
-          if ( rotate ) {
+        if (isMaxSized) {
+          if (rotate) {
             // Current page is displayed in the middle of the visible ones
             startPage = Math.max(currentPage - Math.floor(maxSize/2), 1);
             endPage   = startPage + maxSize - 1;
@@ -166,13 +168,13 @@ angular.module('ui.bootstrap.pagination', [])
         }
 
         // Add links to move between page sets
-        if ( isMaxSized && ! rotate ) {
-          if ( startPage > 1 ) {
+        if (isMaxSized && ! rotate) {
+          if (startPage > 1) {
             var previousPageSet = makePage(startPage - 1, '...', false);
             pages.unshift(previousPageSet);
           }
 
-          if ( endPage < totalPages ) {
+          if (endPage < totalPages) {
             var nextPageSet = makePage(endPage + 1, '...', false);
             pages.push(nextPageSet);
           }
@@ -192,23 +194,24 @@ angular.module('ui.bootstrap.pagination', [])
   };
 }])
 
-.constant('pagerConfig', {
+.constant('uibPagerConfig', {
   itemsPerPage: 10,
   previousText: '« Previous',
   nextText: 'Next »',
   align: true
 })
 
-.directive('pager', ['pagerConfig', function(pagerConfig) {
+.directive('uibPager', ['uibPagerConfig', function(pagerConfig) {
   return {
     restrict: 'EA',
     scope: {
       totalItems: '=',
       previousText: '@',
-      nextText: '@'
+      nextText: '@',
+      ngDisabled: '='
     },
-    require: ['pager', '?ngModel'],
-    controller: 'PaginationController',
+    require: ['uibPager', '?ngModel'],
+    controller: 'UibPaginationController',
     controllerAs: 'pagination',
     templateUrl: function(element, attrs) {
       return attrs.templateUrl || 'template/pagination/pager.html';

@@ -1,12 +1,12 @@
-`$modal` is a service to quickly create AngularJS-powered modal windows.
+`$uibModal` is a service to quickly create AngularJS-powered modal windows.
 Creating custom modals is straightforward: create a partial view, its controller and reference them when using the service.
 
-The `$modal` service has only one method: `open(options)` where available options are like follows:
+The `$uibModal` service has only one method: `open(options)` where available options are like follows:
 
 * `templateUrl` - a path to a template representing modal's content
 * `template` - inline template representing the modal's content
-* `scope` - a scope instance to be used for the modal's content (actually the `$modal` service is going to create a child scope of a provided scope). Defaults to `$rootScope`
-* `controller` - a controller for a modal instance - it can initialize scope used by modal. Accepts the "controller-as" syntax in the form 'SomeCtrl as myctrl'; can be injected with `$modalInstance`
+* `scope` - a scope instance to be used for the modal's content (actually the `$uibModal` service is going to create a child scope of a provided scope). Defaults to `$rootScope`
+* `controller` - a controller for a modal instance - it can initialize scope used by modal. Accepts the "controller-as" syntax in the form 'SomeCtrl as myctrl'; can be injected with `$uibModalInstance`
 * `controllerAs` - an alternative to the controller-as syntax, matching the API of directive definitions. Requires the `controller` option to be provided as well
 * `bindToController` - when used with `controllerAs` & set to `true`, it will bind the $scope properties onto the controller directly
 * `resolve` - members that will be resolved and passed to the controller as locals; it is equivalent of the `resolve` property for AngularJS routes
@@ -15,11 +15,12 @@ The `$modal` service has only one method: `open(options)` where available option
 * `keyboard` - indicates whether the dialog should be closable by hitting the ESC key, defaults to true
 * `backdropClass` - additional CSS class(es) to be added to a modal backdrop template
 * `windowClass` - additional CSS class(es) to be added to a modal window template
+* `windowTopClass` - CSS class(es) to be added to the top modal window
 * `windowTemplateUrl` - a path to a template overriding modal's window template
 * `size` - optional suffix of modal window class. The value used is appended to the `modal-` class, i.e. a value of `sm` gives `modal-sm`
 * `openedClass` - class added to the `body` element when the modal is opened. Defaults to `modal-open`
 
-Global defaults may be set for `$modal` via `$modalProvider.options`.
+Global defaults may be set for `$uibModal` via `$uibModalProvider.options`.
 
 The `open` method returns a modal instance, an object with the following properties:
 

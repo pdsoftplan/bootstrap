@@ -3,11 +3,10 @@
  * function, placement as a function, inside, support for more triggers than
  * just mouse enter/leave, and selector delegatation.
  */
-angular.module( 'ui.bootstrap.popover', [ 'ui.bootstrap.tooltip' ] )
+angular.module('ui.bootstrap.popover', ['ui.bootstrap.tooltip'])
 
-.directive( 'popoverTemplatePopup', function () {
+.directive('uibPopoverTemplatePopup', function() {
   return {
-    restrict: 'EA',
     replace: true,
     scope: { title: '@', contentExp: '&', placement: '@', popupClass: '@', animation: '&', isOpen: '&',
       originScope: '&' },
@@ -15,36 +14,34 @@ angular.module( 'ui.bootstrap.popover', [ 'ui.bootstrap.tooltip' ] )
   };
 })
 
-.directive( 'popoverTemplate', [ '$tooltip', function ( $tooltip ) {
-  return $tooltip( 'popoverTemplate', 'popover', 'click', {
+.directive('uibPopoverTemplate', ['$uibTooltip', function($uibTooltip) {
+  return $uibTooltip('uibPopoverTemplate', 'popover', 'click', {
     useContentExp: true
-  } );
+  });
 }])
 
-.directive( 'popoverHtmlPopup', function () {
+.directive('uibPopoverHtmlPopup', function() {
   return {
-    restrict: 'EA',
     replace: true,
     scope: { contentExp: '&', title: '@', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
     templateUrl: 'template/popover/popover-html.html'
   };
 })
 
-.directive( 'popoverHtml', [ '$tooltip', function ( $tooltip ) {
-  return $tooltip( 'popoverHtml', 'popover', 'click', {
+.directive('uibPopoverHtml', ['$uibTooltip', function($uibTooltip) {
+  return $uibTooltip('uibPopoverHtml', 'popover', 'click', {
     useContentExp: true
   });
 }])
 
-.directive( 'popoverPopup', function () {
+.directive('uibPopoverPopup', function() {
   return {
-    restrict: 'EA',
     replace: true,
     scope: { title: '@', content: '@', placement: '@', popupClass: '@', animation: '&', isOpen: '&' },
     templateUrl: 'template/popover/popover.html'
   };
 })
 
-.directive( 'popover', [ '$tooltip', function ( $tooltip ) {
-  return $tooltip( 'popover', 'popover', 'click' );
+.directive('uibPopover', ['$uibTooltip', function($uibTooltip) {
+  return $uibTooltip('uibPopover', 'popover', 'click');
 }]);
